@@ -1,4 +1,5 @@
 <?php
+
 $msg = "";
 // Import PHPMailer classes into the global namespace
 // These must be at the top of your script, not inside a function
@@ -45,6 +46,46 @@ try {
     die();
 }
 }
+
+// Checks if form has been submitted
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+  function post_captcha($user_response) {
+      $fields_string = '';
+      $fields = array(
+          'secret' => '6Ld0aKQUAAAAADfPk7aF8hZUFwM_Dg5yureKddfT',
+          'response' => $user_response
+      );
+      foreach($fields as $key=>$value)
+      $fields_string .= $key . '=' . $value . '&';
+      $fields_string = rtrim($fields_string, '&');
+
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_URL, 'https://www.google.com/recaptcha/api/siteverify');
+      curl_setopt($ch, CURLOPT_POST, count($fields));
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, True);
+
+      $result = curl_exec($ch);
+      curl_close($ch);
+
+      return json_decode($result, true);
+  }
+
+  // Call the function post_captcha
+  $res = post_captcha($_POST['g-recaptcha-response']);
+
+  if (!$res['success']) {
+      // What happens when the CAPTCHA wasn't checked
+      echo '<p>Please go back and make sure you check the security CAPTCHA box.</p><br>';
+      die();
+  } else {
+      // If CAPTCHA is successfully completed...
+
+      // Paste mail function or whatever else you want to happen here!
+      //echo '<br><p>CAPTCHA was completed successfully!</p><br>';
+  }
+} 
+
 ?>
 
 
@@ -79,6 +120,7 @@ try {
 <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=PT+Serif" rel="stylesheet">
 <script type="text/javascript" src="js/modernizr.custom.js"></script>
+<script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 
 <body>
@@ -222,8 +264,7 @@ try {
         <textarea name="message" id="message" class="form-control" rows="4" placeholder="Message" required></textarea>
         <p class="help-block text-danger"></p>
       </div>
-
-      <div id="success"></div>
+      <div class="g-recaptcha" data-sitekey="6Ld0aKQUAAAAAMHJ6DGIYXZWbSbLXYsQF1liZl7R"></div>
       <button type="submit" name="submit" class="btn btn-default">Send Message</button>
     </form>
     <?php echo $msg; ?>

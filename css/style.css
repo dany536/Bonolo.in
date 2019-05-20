@@ -1,4 +1,4 @@
-body, html {
+﻿body, html {
 	font-family: 'Lato', sans-serif;
 	text-rendering: optimizeLegibility !important;
 	-webkit-font-smoothing: antialiased !important;
@@ -419,7 +419,7 @@ a:focus, .btn:focus, .btn:active:focus, .btn.active:focus, .btn.focus, .btn:acti
 	padding: 10px 0 0px 0;
 	color: #42626b;
 	text-align: center;
-	margin-top: -40px;
+
 }
 
 #footer a{
